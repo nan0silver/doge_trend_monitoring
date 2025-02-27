@@ -1,0 +1,17 @@
+title: 키워드 트렌드 대시보드
+description: 매일 업데이트되는 키워드 트렌드 분석
+theme: minima
+plugins:
+  - jekyll-feed
+  - jekyll-paginate
+
+paginate: 10
+paginate_path: "/page:num/"
+
+defaults:
+  -
+    scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
