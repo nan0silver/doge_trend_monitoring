@@ -1,10 +1,9 @@
-name: 자동 모니터링
+name: 자동 모니터링 및 배포
 
 on:
-    workflow_dispatch:
-    schedule:
-        - cron: '0 1 * * *'
-
+  workflow_dispatch:
+  schedule:
+    - cron: '0 1 * * *'
 
 jobs:
   make-file:
@@ -19,19 +18,59 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      - name: 디렉토리 생성
+        run: |
+          mkdir -p _posts
+          mkdir -p images
+
       - name: Compile and Run code
         run: |
-          javac App.java
+          javac -d . *.java
           java App
         env:
           KEYWORD: ${{ vars.KEYWORD }}
-          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID}}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
-    
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          REPO_PATH: ${{ github.workspace }}
+
       - name: 실행 결과로 나온 파일을 커밋
         uses: EndBug/add-and-commit@v9
         with:
-            author_name: ${{github.actor}}
-            author_email: ${{github.actor}}@users.noreply.github.com
-            message: "모니터링 파일 저장"
-            add: "."
+          author_name: ${{ github.actor }}
+          author_email: ${{ github.actor }}@users.noreply.github.com
+          message: "모니터링 파일 저장"
+          add: "."
+
+  deploy:
+    needs: make-file
+    runs-on: ubuntu-latest
+    steps:
+      - name: 저장소에 있는 파일 불러오기
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+
+  # GitHub Pages 배포
+  pages:
+    needs: deploy
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
