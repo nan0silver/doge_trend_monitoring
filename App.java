@@ -181,7 +181,7 @@ class Monitoring {
             indexContent.append("layout: home\n");
             indexContent.append("title: \"").append(keyword).append(" 트렌드 대시보드\"\n");
             indexContent.append("---\n\n");
-            indexContent.append("# ").append(keyword).append(" 트렌드 대시보드\n\n");
+            //indexContent.append("# ").append(keyword).append(" 트렌드 대시보드\n\n");
             indexContent.append("이 사이트는 '").append(keyword).append("'에 관한 뉴스 트렌드와 LLM 기반 분석을 매일 제공합니다.\n\n");
             indexContent.append("## 최근 분석\n\n");
             indexContent.append("아래 목록에서 날짜별 분석 결과를 확인할 수 있습니다.\n\n");
