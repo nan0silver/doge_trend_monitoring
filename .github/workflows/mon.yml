@@ -47,6 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     # GitHub Pages 권한 추가
     permissions:
+      contents: read
       pages: write
       id-token: write
     environment:
