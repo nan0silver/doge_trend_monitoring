@@ -15,7 +15,6 @@ title: "도지코인 트렌드 대시보드"
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<canvas id="priceChart" width="800" height="400"></canvas>
 <script>
 Promise.all([
   fetch("https://api.coingecko.com/api/v3/coins/dogecoin/market_chart?vs_currency=usd&days=7").then(response => response.json()),
