@@ -58,12 +58,10 @@ jobs:
           ls -la _site || echo "_site directory not found"
       - name: Deploy to GitHub Pages
         run: |
-          cp -r _site /tmp/site
+          cd _site
+          git init
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          git checkout -b gh-pages
-          rm -rf *
-          cp -r /tmp/site/* .
           git add .
           git commit -m "Deploy to GitHub Pages"
-          git push -f origin gh-pages
+          git push --force "https://${{ github.actor }}:${{ github.token }}@github.com/${{ github.repository }}.git" master:gh-pages
