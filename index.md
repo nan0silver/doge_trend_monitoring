@@ -10,7 +10,7 @@ title: "도지코인 트렌드 대시보드"
 
 아래 목록에서 날짜별 분석 결과를 확인할 수 있습니다.
 
-<div class="chart-container" style="width: 80%; margin: auto;">
+<div class="chart-container" style="width: 800px; margin: auto;">
     <canvas id="priceChart"></canvas>
 </div>
 
