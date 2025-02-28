@@ -56,10 +56,16 @@ jobs:
       - name: Debug - Check _site directory
         run: |
           ls -la _site || echo "_site directory not found"
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: ./_site
+          - name: Setup GitHub CLI
+          uses: cli/cli@v2
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+        run: |
+          cp -r _site /tmp/site
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git checkout -b gh-pages
+          rm -rf *
+          cp -r /tmp/site/* .
+          git add .
+          git commit -m "Deploy to GitHub Pages"
+          git push -f origin gh-pages
