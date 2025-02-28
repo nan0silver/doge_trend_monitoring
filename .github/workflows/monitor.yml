@@ -55,13 +55,11 @@ jobs:
           destination: ./_site
       - name: Debug - Check _site directory
         run: |
-          ls -la _site || echo "_site directory not found"
+          ls -la || echo "Cannot access directory"
+          echo "=== Listing root directory ==="
+          find . -maxdepth 1 -type d | sort
       - name: Deploy to GitHub Pages
-        run: |
-          cd _site
-          git init
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          git add .
-          git commit -m "Deploy to GitHub Pages"
-          git push --force "https://${{ github.actor }}:${{ github.token }}@github.com/${{ github.repository }}.git" master:gh-pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: _site # 빌드된 파일들이 있는 폴더
+          branch: gh-pages # 배포할 브랜치
