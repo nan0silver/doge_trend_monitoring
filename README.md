@@ -13,6 +13,21 @@
 ✅ **Chart.js**를 이용한 가격 변동 그래프 표시  
 ✅ **GitHub Actions**를 활용한 자동 업데이트 (매일 오전 8시 KST)  
 
+```mermaid
+flowchart LR
+    A[GitHub Actions 실행] -->|스케줄 또는 수동 트리거| B[Java 프로그램 실행]
+    B --> C[네이버 API로 키워드 뉴스 검색]
+    C --> D[뉴스 데이터 추출]
+    D --> E[GPT-4 API로 뉴스 분석]
+    B --> F[네이버 API로 관련 이미지 검색]
+    F --> G[이미지 다운로드]
+    E --> H[Markdown 파일 생성]
+    G --> H
+    H --> I[GitHub에 결과물 커밋]
+    I --> J[Jekyll로 사이트 빌드]
+    J --> K[GitHub Pages로 배포]
+```
+
 ---
 
 
