@@ -57,7 +57,7 @@ jobs:
         run: |
           ls -la _site || echo "_site directory not found"
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v1
         with:
           path: ./_site
       - name: Deploy to GitHub Pages
