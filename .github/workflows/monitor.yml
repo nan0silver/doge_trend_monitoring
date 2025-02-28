@@ -56,8 +56,6 @@ jobs:
       - name: Debug - Check _site directory
         run: |
           ls -la _site || echo "_site directory not found"
-      - name: Setup GitHub CLI
-        uses: cli/cli@v2
       - name: Deploy to GitHub Pages
         run: |
           cp -r _site /tmp/site
