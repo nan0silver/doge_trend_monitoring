@@ -61,12 +61,16 @@ class Monitoring {
             // 원문 링크 추출
             String[] tmpLinks = response.split("originallink\":\"");
             for (int i = 1; i < tmpLinks.length && i <= display; i++) {
-                originalLinks[i - 1] = tmpLinks[i].split("\",")[0];
+                originalLinks[i - 1] = tmpLinks[i].split("\",")[0]
+                                        .replaceAll("\\\\", ""); // 이스케이프된 백슬래시 제거
             }
 
             // 제목 추출
             for (int i = 1; i < tmp.length; i++) {
-                titles[i - 1] = tmp[i].split("\",")[0];
+                titles[i - 1] = tmp[i].split("\",")[0]
+                                .replaceAll("</?b>", "") // <b> 및 </b> 태그 제거
+                                .replaceAll("\\\\", ""); // 이스케이프된 백슬래시 제거
+
             }
             logger.info(Arrays.toString(titles));
 
@@ -173,9 +177,15 @@ class Monitoring {
         markdown.append("## 오늘의 주요 뉴스\n\n");
         for (int i = 0; i < titles.length; i++) {
             if (titles[i] != null && !titles[i].isEmpty()) {
+                // 하이퍼링크 형식으로 제목 추가 (URL 인코딩 검사 추가)
                 if (originalLinks[i] != null && !originalLinks[i].isEmpty()) {
-                    // 하이퍼링크 형식으로 제목 추가
-                    markdown.append("- [").append(titles[i]).append("](").append(originalLinks[i]).append(")\n");
+                    String safeUrl = originalLinks[i];
+                    if (safeUrl.contains("(") || safeUrl.contains(")")) {
+                        // URL에 괄호가 있는 경우 <> 로 감싸서 처리
+                        markdown.append("- [").append(titles[i]).append("](<").append(safeUrl).append(">)\n");
+                    } else {
+                        markdown.append("- [").append(titles[i]).append("](").append(safeUrl).append(")\n");
+                    }
                 } else {
                     // 링크가 없는 경우 일반 텍스트로 추가
                     markdown.append("- ").append(titles[i]).append("\n");
