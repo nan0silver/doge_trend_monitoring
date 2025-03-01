@@ -69,8 +69,8 @@ class Monitoring {
             for (int i = 1; i < tmp.length; i++) {
                 titles[i - 1] = tmp[i].split("\",")[0]
                                 .replaceAll("</?b>", "") // <b> 및 </b> 태그 제거
+                                .replaceAll("<b>|</b>", "") // 백업 코드로 HTML 태그 제거
                                 .replaceAll("\\\\", ""); // 이스케이프된 백슬래시 제거
-
             }
             logger.info(Arrays.toString(titles));
 
