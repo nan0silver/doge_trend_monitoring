@@ -1,5 +1,3 @@
-import java.io.File;
-import java.io.FileWriter;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -9,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Logger;
 
@@ -57,6 +56,15 @@ class Monitoring {
             // 뉴스 제목 추출
             String[] tmp = response.split("title\":\"");
             String[] titles = new String[display];
+            String[] originalLinks = new String[display];
+
+            // 원문 링크 추출
+            String[] tmpLinks = response.split("originallink\":\"");
+            for (int i = 1; i < tmpLinks.length && i <= display; i++) {
+                originalLinks[i - 1] = tmpLinks[i].split("\",")[0];
+            }
+
+            // 제목 추출
             for (int i = 1; i < tmp.length; i++) {
                 titles[i - 1] = tmp[i].split("\",")[0];
             }
@@ -87,9 +95,16 @@ class Monitoring {
             
             // 현재 날짜 가져오기
             String currentDate = dateFormat.format(new Date());
+
+            // 현재 날짜를 기준으로 start 파라미터 변경
+            Calendar cal = Calendar.getInstance();
+            int dayOfYear = cal.get(Calendar.DAY_OF_YEAR);
+
+            // 날짜에 따라 1~50 사이의 값으로 start 파라미터 순환
+            int start_image = (dayOfYear % 50) + 1;
             
             // 이미지 다운로드
-            String imageResponse = getDataFromAPI("image", keyword, display, start, SortType.sim);
+            String imageResponse = getDataFromAPI("image", keyword, display, start_image, SortType.sim);
             imageLink = imageResponse
                     .split("link\":\"")[1].split("\",")[0]
                     .split("\\?")[0]
@@ -112,7 +127,7 @@ class Monitoring {
             client.send(request, HttpResponse.BodyHandlers.ofFile(imagePath));
             
             // Markdown 파일 생성 (날짜별 분석)
-            String markdownContent = createMarkdownContent(keyword, titles, analysisResult, imageName, currentDate);
+            String markdownContent = createMarkdownContent(keyword, titles, originalLinks, analysisResult, imageName, currentDate);
             Path markdownPath = Paths.get(REPO_PATH, "_posts", currentDate + "-" + keyword + "-analysis.md");
             
             // _posts 디렉토리 생성
@@ -135,7 +150,7 @@ class Monitoring {
     }
     
     // Markdown 형식의 콘텐츠 생성
-    private String createMarkdownContent(String keyword, String[] titles, String analysisResult, String imageName, String currentDate) {
+    private String createMarkdownContent(String keyword, String[] titles, String[] originalLinks, String analysisResult, String imageName, String currentDate) {
         StringBuilder markdown = new StringBuilder();
         
         // Front matter 추가 (Jekyll 용)
@@ -152,13 +167,19 @@ class Monitoring {
         markdown.append("# ").append(keyword).append("에 대한 트렌드 분석 (").append(currentDate).append(")\n\n");
         
         // 이미지 추가
-        markdown.append("![").append(keyword).append(" 관련 이미지](/images/").append(imageName).append(")\n\n");
-        
-        // 뉴스 목록 추가
+        markdown.append("<img src=\"https://nan0silver.github.io/auto_monitoring/images/").append(imageName).append("\" alt=\"").append(keyword).append(" 관련 이미지\" width=\"300\">\n\n");
+         
+        // 뉴스 목록 추가 - 하이퍼링크로 변경
         markdown.append("## 오늘의 주요 뉴스\n\n");
-        for (String title : titles) {
-            if (title != null && !title.isEmpty()) {
-                markdown.append("- ").append(title).append("\n");
+        for (int i = 0; i < titles.length; i++) {
+            if (titles[i] != null && !titles[i].isEmpty()) {
+                if (originalLinks[i] != null && !originalLinks[i].isEmpty()) {
+                    // 하이퍼링크 형식으로 제목 추가
+                    markdown.append("- [").append(titles[i]).append("](").append(originalLinks[i]).append(")\n");
+                } else {
+                    // 링크가 없는 경우 일반 텍스트로 추가
+                    markdown.append("- ").append(titles[i]).append("\n");
+                }
             }
         }
         markdown.append("\n");
