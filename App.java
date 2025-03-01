@@ -1,5 +1,3 @@
-import java.io.File;
-import java.io.FileWriter;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -9,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Logger;
 
@@ -87,9 +86,16 @@ class Monitoring {
             
             // 현재 날짜 가져오기
             String currentDate = dateFormat.format(new Date());
+
+            // 현재 날짜를 기준으로 start 파라미터 변경
+            Calendar cal = Calendar.getInstance();
+            int dayOfYear = cal.get(Calendar.DAY_OF_YEAR);
+
+            // 날짜에 따라 1~50 사이의 값으로 start 파라미터 순환
+            int start_image = (dayOfYear % 50) + 1;
             
             // 이미지 다운로드
-            String imageResponse = getDataFromAPI("image", keyword, display, start, SortType.sim);
+            String imageResponse = getDataFromAPI("image", keyword, display, start_image, SortType.sim);
             imageLink = imageResponse
                     .split("link\":\"")[1].split("\",")[0]
                     .split("\\?")[0]
