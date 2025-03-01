@@ -36,12 +36,15 @@ jobs:
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           REPO_PATH: ${{ github.workspace }}
+      - name: 현재 날짜 설정
+        id: date
+        run: echo "TODAY=$(date +'%Y-%m-%d %H:%M')" >> $GITHUB_ENV
       - name: 실행 결과로 나온 파일을 커밋
         uses: EndBug/add-and-commit@v9
         with:
           author_name: ${{ github.actor }}
           author_email: ${{ github.actor }}@users.noreply.github.com
-          message: "feat : 모니터링 파일 저장 ($(date +'%Y-%m-%d %H:%M'))"
+          message: "feat : 모니터링 파일 저장 (${{ env.TODAY }})"
           add: "."
       - name: Debug - Check files before Jekyll build
         run: |
