@@ -171,7 +171,7 @@ class Monitoring {
         markdown.append("# ").append(keyword).append("에 대한 트렌드 분석 (").append(currentDate).append(")\n\n");
         
         // 이미지 추가
-        markdown.append("<img src=\"https://nan0silver.github.io/auto_monitoring/images/").append(imageName).append("\" alt=\"").append(keyword).append(" 관련 이미지\" width=\"300\">\n\n");
+        markdown.append("<img src=\"https://nan0silver.github.io/doge_trend_monitoring/images/").append(imageName).append("\" alt=\"").append(keyword).append(" 관련 이미지\" width=\"300\">\n\n");
          
         // 뉴스 목록 추가 - 하이퍼링크로 변경
         markdown.append("## 오늘의 주요 뉴스\n\n");
