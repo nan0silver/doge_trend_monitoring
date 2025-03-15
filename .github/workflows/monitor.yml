@@ -3,7 +3,7 @@ name: 자동 모니터링 및 배포
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 0 */2 * *"
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
